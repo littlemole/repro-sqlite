@@ -44,7 +44,7 @@ sqlite3* SqlitePool::getConnection()
 	}
 
 	sqlite3* r = 0;
-    int rc = sqlite3_open(host.c_str(), &r);
+    int rc = sqlite3_open(host_.c_str(), &r);
     if( rc )
     {
     	throw repro::Ex("cannot open db");
