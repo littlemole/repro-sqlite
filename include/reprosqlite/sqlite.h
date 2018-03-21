@@ -17,7 +17,7 @@ class SqlitePool
 {
 public:
 
-	SqlitePool(const std::string& db, int capacity = 4);
+	SqlitePool(const std::string& db, int capacity = 1);
 	~SqlitePool();
 
 	sqlite3* getConnection();
