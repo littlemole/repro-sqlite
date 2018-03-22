@@ -139,7 +139,7 @@ Statement::FutureType Statement::exec(  )
 
 		int step = sqlite3_step(stm);
 
-		if(step==SQLITE_ERROR)
+		if(step!=SQLITE_ROW)
 		{
 			sqlite3_finalize(stm);
 			throw repro::Ex("execute statement failed");
