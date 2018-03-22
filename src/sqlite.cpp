@@ -139,6 +139,12 @@ Statement::FutureType Statement::exec(  )
 
 		int step = sqlite3_step(stm);
 
+		if(step==SQLITE_ERROR)
+		{
+			sqlite3_finalize(stm);
+			throw repro::Ex("execute statement failed");
+		}
+
 		Result result;
 		while (step == SQLITE_ROW)
 		{
@@ -151,6 +157,11 @@ Statement::FutureType Statement::exec(  )
 			}
 			result.data.push_back(std::move(v));
 			step = sqlite3_step(stm);
+			if(step==SQLITE_ERROR)
+			{
+				sqlite3_finalize(stm);
+				throw repro::Ex("execute statement failed");
+			}			
 		}
 
 		result.last_insert_id = sqlite3_last_insert_rowid(sqlite3_);
