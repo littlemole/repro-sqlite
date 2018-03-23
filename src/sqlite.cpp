@@ -139,7 +139,7 @@ Statement::FutureType Statement::exec(  )
 
 		int step = sqlite3_step(stm);
 
-		if(step!=SQLITE_ROW)
+		if(step!=SQLITE_OK && step<SQLITE_ROW)
 		{
 			sqlite3_finalize(stm);
 			throw repro::Ex("execute statement failed");
@@ -148,7 +148,6 @@ Statement::FutureType Statement::exec(  )
 		Result result;
 		while (step == SQLITE_ROW)
 		{
-
 			int n = sqlite3_column_count(stm);
 			std::vector<std::string> v;
 			for ( int i = 0; i < n; i++ )
@@ -157,17 +156,17 @@ Statement::FutureType Statement::exec(  )
 			}
 			result.data.push_back(std::move(v));
 			step = sqlite3_step(stm);
-			if(step==SQLITE_ERROR)
-			{
-				sqlite3_finalize(stm);
-				throw repro::Ex("execute statement failed");
-			}			
 		}
 
-		result.last_insert_id = sqlite3_last_insert_rowid(sqlite3_);
 		sqlite3_finalize(stm);
 
-		return result;
+		if(step==SQLITE_OK || step == SQLITE_DONE)
+		{
+			result.last_insert_id = sqlite3_last_insert_rowid(sqlite3_);
+			return result;
+		}
+
+		throw repro::Ex("execute statement failed");
 	})
 	.then([this,p](Result&& r)
 	{

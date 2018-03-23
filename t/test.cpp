@@ -165,6 +165,46 @@ TEST_F(BasicTest, SimpleSql2) {
 	MOL_TEST_ASSERT_CNTS(0, 0);
 }
 
+TEST_F(BasicTest, SimpleSqlFailconstraint) {
+
+	std::string result;
+	{
+#ifndef _WIN32
+		signal(SIGPIPE).then([](int s) {});
+#endif
+		signal(SIGINT).then([](int s) { theLoop().exit(); });
+
+		reprosqlite::SqlitePool sql("test.db");
+
+		sql.query("INSERT INTO user (id,email,passwd) VALUES (?,?,?)", 1,"wont work", "nada")
+		.then([&result](reprosqlite::Result r)
+		{
+			std::cout << "worked" << std::endl;
+			std::ostringstream oss;
+			for (unsigned int i = 0; i < r.rows(); i++)
+			{
+				for (unsigned int j = 0; j < r.cols(); j++)
+				{
+					oss << r.row(i)[j];
+				}
+				oss << std::endl;
+			}
+			result = oss.str();
+			theLoop().exit();
+		})
+		.otherwise([&result](const std::exception& ex)
+		{
+			std::cout << "failed:" << typeid(ex).name() << "|"<< ex.what() << std::endl;
+			result = "failed";
+			theLoop().exit();
+		});
+		theLoop().run();
+	}
+
+	EXPECT_EQ("failed", result);
+	MOL_TEST_ASSERT_CNTS(0, 0);
+}
+
 /*
 class SaltedPasswd
 {
