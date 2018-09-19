@@ -67,6 +67,7 @@ public:
 	}
 
 	std::vector<std::vector<std::string>> data;
+	std::vector<std::string> columns;
 };
 
 

@@ -132,6 +132,8 @@ Statement::FutureType Statement::exec(  )
 			throw repro::Ex("create stm failed");
 		}
 
+		Result result;
+
 		for ( unsigned int i = 0; i < values_.size(); i++)
 		{
 			sqlite3_bind_text(stm, i+1, values_[i].c_str(),values_[i].size(),SQLITE_TRANSIENT);
@@ -145,7 +147,14 @@ Statement::FutureType Statement::exec(  )
 			throw repro::Ex("execute statement failed");
 		}
 
-		Result result;
+		int n = sqlite3_column_count(stm);
+		for ( int i = 0; i < n; i++ )
+		{
+			const char* colname = sqlite3_column_name(stm,i);
+			std::cout << "col: " << i << " value: " << colname << std::endl;
+			result.columns.push_back(std::string(colname));
+		}
+
 		while (step == SQLITE_ROW)
 		{
 			int n = sqlite3_column_count(stm);

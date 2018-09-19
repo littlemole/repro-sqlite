@@ -10,6 +10,7 @@
 #include <functional>
 #include "reprocpp/after.h"
 #include "test.h"
+#include <json/json.h>
 #include "priocpp/loop.h"
 #include "priocpp/api.h"
 #include "priocpp/task.h"
@@ -18,6 +19,7 @@
 #include <event2/event.h>
 
 #include <reprosqlite/sqlite.h>
+#include <reprosqlite/sqlite-json.h>
 
 #include <stdio.h>
 #include <sqlite3.h>
@@ -127,6 +129,38 @@ TEST_F(BasicTest, SimpleSql) {
 	MOL_TEST_ASSERT_CNTS(0,0);
 }
 
+
+TEST_F(BasicTest, SimpleSqlJson) {
+
+	std::string result;
+	{
+#ifndef _WIN32
+		signal(SIGPIPE).then([](int s){});
+#endif
+		signal(SIGINT).then([](int s) { theLoop().exit(); });
+
+		reprosqlite::SqlitePool sql("test.db");
+
+		sql.stm("SELECT * FROM user")->exec()
+		.then([&result](reprosqlite::Result r)
+		{
+			Json::StreamWriterBuilder wbuilder;
+			wbuilder["commentStyle"] = "None";
+			wbuilder["indentation"] = ""; 
+
+			result = Json::writeString(wbuilder, toJson(r));
+			theLoop().exit();
+		})
+		.otherwise([](const std::exception& ex)
+		{
+
+		});
+		theLoop().run();
+	}
+
+	EXPECT_EQ("[{\"email\":\"admin\",\"id\":\"1\",\"passwd\":\"12345\"},{\"email\":\"mike\",\"id\":\"2\",\"passwd\":\"12345\"}]",result);
+	MOL_TEST_ASSERT_CNTS(0,0);
+}
 
 TEST_F(BasicTest, SimpleSql2) {
 
