@@ -46,10 +46,11 @@ IF (WIN32)
 	find_library(SQLITE_LIBRARY NAMES sqlite3)
 	find_library(NG2HTTP_LIBRARY NAMES nghttp2)
 	find_library(LIBEVENT_LIBRARY NAMES event)
+	find_library(JSONCPP_LIBRARY NAMES jsoncpp)	
 
 	set(BUILDFLAGS "-await ${FLAGS}")
 	set(DEBUGFLAGS "-DMOL_PROMISE_DEBUG")
-	set(LIBS ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARY} ${SQLITE_LIBRARY} ${STDLIB}  )
+	set(LIBS ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARY} ${SQLITE_LIBRARY} ${JSONCPP_LIBRARY} ${STDLIB}  )
 
 	if( "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		find_library(PRIOCPP_LIBRARY NAMES priocpp)
@@ -72,13 +73,14 @@ IF (WIN32)
     pkg_check_modules(NGHTTP2 REQUIRED libnghttp2)
     pkg_check_modules(PRIOCPP REQUIRED priocpp)
     pkg_check_modules(LIBEVENT REQUIRED libevent_pthreads)
+    pkg_check_modules(JSONCPP REQUIRED jsoncpp)
 
 	set(LIBEVENT_LIBRARY ${LIBEVENT_LIBRARIES})
 
     set(BUILDFLAGS " ${FLAGS}")
 	set(DEBUGFLAGS "-g -DMOL_PROMISE_DEBUG")
 
-	set(LIBS priocppd ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NGHTTP2_LIBRARIES} ${SQLITE_LIBRARIES} ${STDLIB} )
+	set(LIBS priocppd ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NGHTTP2_LIBRARIES} ${SQLITE_LIBRARIES} ${JSONCPP_LIBRARIES} ${STDLIB} )
 ENDIF ()
 
 ############################################
