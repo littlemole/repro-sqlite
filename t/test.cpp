@@ -304,7 +304,8 @@ TEST_F(BasicTest, SimpleCrypt) {
 
 int main(int argc, char **argv) {
 
-	prio::init();
+	prio::Libraries<prio::EventLoop> init;
+
     ::testing::InitGoogleTest(&argc, argv);
     int r = RUN_ALL_TESTS();
 
