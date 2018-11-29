@@ -106,7 +106,7 @@ endmacro()
 
 set(BACKEND ${LIBEVENT_LIBRARY})
 
-option(WITH_LIBEVENT "use libevent (default:on)" ON)
+option(WITH_LIBEVENT "use libevent (default:on)" OFF)
 if(WITH_LIBEVENT)
     add_definitions(-DPROMISE_USE_LIBEVENT)
 else()
