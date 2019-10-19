@@ -48,6 +48,10 @@ class Result
 {
 public:
 
+	Result() {}
+	Result(const Result& rhs) = default;
+	Result(Result&& rhs) = default;
+
 	LITTLE_MOLE_MONITOR(SqliteResults);
 
 	sqlite3_int64 last_insert_id;
@@ -71,6 +75,8 @@ public:
 
 	std::vector<std::vector<std::string>> data;
 	std::vector<std::string> columns;
+
+private:
 };
 
 
