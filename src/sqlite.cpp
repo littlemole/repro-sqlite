@@ -183,8 +183,9 @@ Statement::FutureType Statement::exec(  )
 		self_.reset();
 		p.resolve(r);
 	})
-	.otherwise( [p] (const std::exception& ex)
+	.otherwise( [this,p] (const std::exception& ex)
 	{
+		self_.reset();
 		p.reject(ex);
 	});
 

@@ -9,7 +9,7 @@
 #include <exception>
 #include <functional>
 #include "reprocpp/after.h"
-#include "test.h"
+#include "reprocpp/test.h"
 #include <json/json.h>
 #include "priocpp/loop.h"
 #include "priocpp/api.h"

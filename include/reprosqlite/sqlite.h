@@ -47,6 +47,9 @@ private:
 class Result
 {
 public:
+
+	LITTLE_MOLE_MONITOR(SqliteResults);
+
 	sqlite3_int64 last_insert_id;
 
 	unsigned int rows() { return data.size(); }
@@ -74,6 +77,9 @@ public:
 class Statement : public std::enable_shared_from_this<Statement>
 {
 public:
+
+	LITTLE_MOLE_MONITOR(SqliteStatements);
+
 
 	typedef repro::Future<Result> FutureType;
 	typedef std::shared_ptr<Statement> Ptr;
