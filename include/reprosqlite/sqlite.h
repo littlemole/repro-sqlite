@@ -48,11 +48,28 @@ class Result
 {
 public:
 
-	Result() {}
-	Result(const Result& rhs) = default;
-	Result(Result&& rhs) = default;
+	Result() 
+	{
+		REPRO_MONITOR_INCR(sqliteResult);
+	}
 
-	LITTLE_MOLE_MONITOR(SqliteResults);
+	Result(const Result& rhs)
+		:data(rhs.data),columns(rhs.columns)
+	{
+		REPRO_MONITOR_INCR(sqliteResult);
+	}
+
+	Result(Result&& rhs)
+		: data(std::move(rhs.data)),
+		columns(std::move(rhs.columns))
+	{
+		REPRO_MONITOR_INCR(sqliteResult);
+	}
+	
+	~Result()
+	{
+		REPRO_MONITOR_DECR(sqliteResult);	
+	}
 
 	sqlite3_int64 last_insert_id;
 
@@ -77,15 +94,16 @@ public:
 	std::vector<std::string> columns;
 
 private:
+
+	Result& operator=(const Result&) = delete;
+	Result& operator=(Result&&) = delete;
+
 };
 
 
 class Statement : public std::enable_shared_from_this<Statement>
 {
 public:
-
-	LITTLE_MOLE_MONITOR(SqliteStatements);
-
 
 	typedef repro::Future<Result> FutureType;
 	typedef std::shared_ptr<Statement> Ptr;
@@ -101,6 +119,8 @@ public:
 private:
 
 	Statement(SqlitePool& pool);
+	Statement(const Statement&) = delete;
+	Statement& operator=(const Statement&) = delete;
 
 	std::string sql_;
 	std::vector<std::string> values_;

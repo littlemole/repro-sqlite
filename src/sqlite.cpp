@@ -94,7 +94,9 @@ std::shared_ptr<Statement> SqlitePool::stm(const std::string& sql)
 
 Statement::~Statement()
 {
+	std::cout << "~Statement" << std::endl;
 	pool_.returnConnection(sqlite3_);
+	REPRO_MONITOR_DECR(sqliteStatement);
 }
 
 Statement::Ptr Statement::create(SqlitePool& pool)
@@ -177,7 +179,7 @@ Statement::FutureType Statement::exec(  )
 
 		throw repro::Ex("execute statement failed");
 	})
-	.then([this,p](Result&& r)
+	.then([this,p](Result r)
 	{
 		auto tmp = self_;
 		self_.reset();
@@ -196,7 +198,11 @@ Statement::FutureType Statement::exec(  )
 Statement::Statement(SqlitePool& pool)
 	: pool_(pool),
 	  sqlite3_(pool.getConnection())
-{}
+{
+		std::cout << "Statement()" << std::endl;
+
+		REPRO_MONITOR_INCR(sqliteStatement);
+}
 
 
 }
