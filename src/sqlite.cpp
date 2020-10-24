@@ -94,7 +94,6 @@ std::shared_ptr<Statement> SqlitePool::stm(const std::string& sql)
 
 Statement::~Statement()
 {
-	std::cout << "~Statement" << std::endl;
 	pool_.returnConnection(sqlite3_);
 	REPRO_MONITOR_DECR(sqliteStatement);
 }
@@ -153,7 +152,6 @@ Statement::FutureType Statement::exec(  )
 		for ( int i = 0; i < n; i++ )
 		{
 			const char* colname = sqlite3_column_name(stm,i);
-			std::cout << "col: " << i << " value: " << colname << std::endl;
 			result.columns.push_back(std::string(colname));
 		}
 
@@ -199,8 +197,6 @@ Statement::Statement(SqlitePool& pool)
 	: pool_(pool),
 	  sqlite3_(pool.getConnection())
 {
-		std::cout << "Statement()" << std::endl;
-
 		REPRO_MONITOR_INCR(sqliteStatement);
 }
 
